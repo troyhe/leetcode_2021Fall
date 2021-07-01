@@ -1,24 +1,23 @@
 class Solution {
 public:
     int carFleet(int target, vector<int>& position, vector<int>& speed) {
-        vector<pair<int, int>> cars(position.size());
-        for (int i = 0; i < position.size(); i++){
-            cars[i] = {position[i], speed[i]}; 
-        }
-        sort(cars.begin(), cars.end());
+        vector<int> idx(position.size());
+        for (int i = 0; i < position.size(); i++) idx[i] = i;
+        sort(idx.begin(), idx.end(), [&position, &speed](int idx1, int idx2){
+            if (position[idx1] == position[idx2]) return speed[idx1] > speed[idx2];
+            return position[idx1] > position[idx2];
+        });
         int numCarFleet = 0;
         double curTime = 0;
         int curSpeed = INT_MAX;
-        for (int i = (int) cars.size() - 1; i >= 0; i--){
-            double time = (target - cars[i].first)/ (double)cars[i].second;
-            if (time <= curTime && cars[i].second >= curSpeed){
+        for (int i = 0; i < idx.size(); i++){
+            double time = (target - position[idx[i]])/ (double) speed[idx[i]];
+            if (time <= curTime && speed[idx[i]] >= curSpeed){
                 
-                // curTime = time;
-                // curSpeed = cars
             } else {
                 numCarFleet++;
                 curTime = time;
-                curSpeed = cars[i].second;
+                curSpeed = speed[idx[i]];
             }
         }
         return numCarFleet;
